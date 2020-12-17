@@ -47,6 +47,8 @@ $CASAuth = array(
         "LogoutServers"  => false,
         "Port"           => 443,
         "Url"            => "/cas/",
+        "UseCert"        => false,
+	    "Cert"           => "/cas/cert.crt",
         "Version"        => "2.0",
         "CreateAccounts" => false,     
         "PwdSecret"      => "Secret",
@@ -102,8 +104,12 @@ function casLogin($user) {
                         if(!$casIsSetUp)
                                 casSetup();
 
-                        //Will redirect to CAS server if not logged in
-                        phpCAS::forceAuthentication();
+                        // Check if we're logged in already
+                        // This prevents the user from needing to logout of other resources
+                        if (!phpCAS::checkAuthentication())
+                        {
+                            phpCAS::forceAuthentication();
+                        }
 
 
                         // Get username
@@ -128,6 +134,12 @@ function casLogin($user) {
 
                         // Get MediaWiki user
                         $u = User::newFromName($username);    
+
+                        // Redirect the user if they are unauthorized and we aren't making accounts
+                        if ($u->getID() == 0 && !$CASAuth["CreateAccounts"]) {
+                            $wgOut->redirect($CASAuth["RestrictRedirect"]);
+                            return true;
+                        }
 
                         // Create a new account if the user does not exists
                         if ($u->getID() == 0 && $CASAuth["CreateAccounts"]) {
@@ -294,10 +306,22 @@ function casSetup() {
 
         require_once($CASAuth["phpCAS"]."/CAS.php");
         phpCAS::client($CASAuth["Version"], $CASAuth["Server"], $CASAuth["Port"], $CASAuth["Url"], false);
+        
+        // If we are using a certificate, set the CAS Server Certificate
+        if ($CASAuth["UseCert"])
+        {
+            phpCAS::setCasServerCACert($CASAuth["Cert"]);
+        }
+        
         phpCAS::setSingleSignoutCallback('casSingleSignOut');
         phpCAS::setPostAuthenticateCallback('casPostAuth');
         phpCAS::handleLogoutRequests(true,isset($CASAuth["LogoutServers"])?$CASAuth["LogoutServers"]:false);
-        phpCAS::setNoCasServerValidation();
-
+        
+        // If we aren't using a certificate, don't use CAS Server Validation
+        if (!$CASAuth["UseCert"])
+        {
+            phpCAS::setNoCasServerValidation();
+        }
+        
         $casIsSetUp = true;
 }

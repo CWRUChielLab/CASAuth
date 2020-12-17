@@ -1,8 +1,15 @@
-CASAuth(entication) Extension for Mediawiki
-===========================================
+CASAuth Extension for Mediawiki
+===============================
+This is compatible with version MediaWiki version 1.33
 
-A CAS Authentication extension for Mediawiki 1.27, 1.23 (and possibly
-earlier).
+This differs from the original by offering a new CA Certificate setting that is implemented in the casSetup function.
+
+It also adds a check in casLogin() to see whether a user is already authenticated through another web application before forcing the authentication. This ensures that the phpCAS:getUser() method is able to get the username in the event the user is already authenticated through another session, and prevents the user from needing to log out of their institution's applications before logging into the MediaWiki.
+
+This is forked from the CWRUChielLab/CASAuth repo, both this version and the original seem to be compatible with newer versions of MediaWiki.
+
+Below is the original README content from CWRUChielLab/CASAuth :
+
 
 Introduction
 ------------

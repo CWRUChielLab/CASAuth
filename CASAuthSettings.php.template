@@ -37,6 +37,16 @@ $CASAuth["Port"]=443;
 # Default: $CASAuth["Url"]="/cas/";
 $CASAuth["Url"]="/cas/"; 
 
+# CA Certificate Settings
+#
+# Set UseCert to true if you need to use a CA certificate to authenticate
+# then set Cert to the certificate location.
+#
+# Default: $CASAuth["UseCert"]=false;
+# Default: $CASAuth["Cert"]="/crt/cert.crt";
+$CASAuth["UseCert"]=false;
+$CASAuth["Cert"]="/crt/cert.crt";
+
 # CAS Version.  Available versions are "1.0" and "2.0".
 #
 # Default: $CASAuth["Version"]="2.0";
