@@ -9,6 +9,8 @@
 # information.
 #
 # Default: $CASAuth["phpCAS"]="$IP/extensions/CASAuth/CAS";
+# via composer: $CASAuth["phpCAS"]="$IP/vendor/jasig/phpcas";
+
 $CASAuth["phpCAS"]="$IP/extensions/CASAuth/CAS";
 
 # Location of the CAS authentication server.  You must set this to the location

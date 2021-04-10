@@ -172,8 +172,7 @@ function casLogin($user) {
                         if ($returnto) {
                           $target = Title::newFromText($returnto);
                           if ($target) {
-                            //action=purge is used to purge the cache
-                            $wgOut->redirect($target->getFullUrl('action=purge'));
+                            $wgOut->redirect($target->getFullUrl());
                           }
                         }
                 }
@@ -297,7 +296,8 @@ function casSetup() {
         global $casIsSetUp;
 
         // Make the session persistent so that phpCAS doesn't change the session id
-        wfSetupSession();
+        $session = MediaWiki\Session\SessionManager::getGlobalSession();
+        $session->persist();
 
         require_once($CASAuth["phpCAS"]."/CAS.php");
         phpCAS::client($CASAuth["Version"], $CASAuth["Server"], $CASAuth["Port"], $CASAuth["Url"], false);
